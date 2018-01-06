@@ -13,6 +13,7 @@ var passport=require('passport');
 
 var secret=require('./config/secret');
 var User = require('./models/user');
+var Product = require('./models/product');
 var Category=require('./models/category');
 var cartLength=require('./middleware/middleware');
 
@@ -61,6 +62,14 @@ app.use(function(req,res,next){
 		next();
 	});
 });
+
+/*app.use(function(req,res,next){
+	Category.find({},function(error,products){
+		if(error) return next(error);
+		res.locals.products=products;
+		next();
+	});
+});*/
 app.engine('ejs',engine);
 app.set('view engine','ejs');
 

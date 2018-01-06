@@ -2,7 +2,15 @@ var router=require('express').Router();
 var Product=require('../models/product');
 
 router.get('/',function(req,res){
-	res.render('main/home');
+	Product
+	.find({})
+	.populate('category')
+	.exec(function(error,products){
+		if(error) return next(error);
+		res.render('main/home',{
+			products:products
+		});
+	});
 });
 
 
