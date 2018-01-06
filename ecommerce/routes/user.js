@@ -17,28 +17,16 @@ var storage =   multer.diskStorage({
   }
 });
 var upload = multer({ storage : storage}).single('file');
-
-
-
-
 router.get('/login',function(req,res,next){
 	if(req.user) return res.redirect('/');
 	res.render('accounts/login',{message:req.flash('loginMessage')});
 });
 
 router.post('/login',passport.authenticate('local-login',{
-	successRedirect:'/profile',
+	successRedirect:'/',
 	failureRedirect:'/login',
 	failureFlash:true
 }));
-
-router.get('/profile',function(req,res,next){
-	User.findOne({_id:req.user._id},function(error,user){
-		if(error) return next(error);
-		res.render('accounts/profile',{user:user});
-	});	
-});
-
 router.get('/signup',function(req,res){
 	res.render('accounts/signup',{
 		errors: req.flash('errors')
@@ -48,10 +36,10 @@ router.get('/signup',function(req,res){
 
 router.post('/signup',function(req,res,next){
 	var user=new User();
-	user.profile.name=req.body.name;
+	user.name=req.body.name;
 	user.email=req.body.email;
 	user.password=req.body.password;
-	user.profile.picture=user.gravatar();
+	//user.profile.picture=user.gravatar();
 
 	User.findOne({email : req.body.email},function(error,existingUser){
 		if(existingUser)
@@ -72,7 +60,7 @@ router.post('/signup',function(req,res,next){
 					if(error) return next(error);
 					req.logIn(user,function(error){
 						if(error) return next(error);
-						res.redirect('/profile');
+						res.redirect('/');
 					});
 
 				});
@@ -110,43 +98,4 @@ router.get('/logout',function(req,res,next){
 	req.logout();
 	res.redirect('/');
 });
-
-router.get('/edit-profile',function(req,res,next){
-	if(!req.user) return res.redirect('/login');
-	res.render('accounts/edit-profile',{message:req.flash('success')});
-});
-
-
-router.post('/edit-profile',function(req,res,next){
-	upload(req,res,function(error) {
-			if(error) {
-	            return next(error);
-	        }
-			var picture=null;
-			if(typeof req.file!=='undefined'){ 
-				picture="/uploads/"+req.file.filename;
-			}
-
-		    User.findOne({_id:req.user._id},function(error,user){
-				if(error) return next(error);
-				if(req.body.name) user.profile.name=req.body.name;
-				if(req.body.address) user.address=req.body.address;
-				if(picture){ 
-					if(fs.existsSync("C:/project/ecommerce/ecommerce/public"+user.profile.picture))
-					fs.unlink("C:/project/ecommerce/ecommerce/public"+user.profile.picture);
-					user.profile.picture=picture; 
-				}
-				user.save(function(error,user){
-					if(error) return next(error);
-					req.flash('success','Successfully Edited Profile.');
-					return res.redirect('/edit-profile');
-				});
-			});
-
-	});
-});
-
-
-
-
 module.exports=router;

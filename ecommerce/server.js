@@ -68,7 +68,7 @@ app.set('view engine','ejs');
 
 
 
-var mainRoutes=require('./routes/main');
+var mainRoutes=require('./routes/product');
 app.use(mainRoutes);
 var userRoutes=require('./routes/user');;
 app.use(userRoutes);

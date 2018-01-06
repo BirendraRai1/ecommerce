@@ -1,5 +1,6 @@
 var Cart=require('../models/cart');
 
+
 module.exports=function(req,res,next){
 	if(req.user){
 		var total=0;
@@ -26,3 +27,5 @@ module.exports=function(req,res,next){
 		next();
 	}
 };
+
+
