@@ -1,6 +1,8 @@
 var router=require('express').Router();
 var Product=require('../models/product');
 
+
+
 router.get('/',function(req,res){
 	Product
 	.find({})
@@ -14,7 +16,7 @@ router.get('/',function(req,res){
 });
 
 
-router.post('/product/:id',function(req,res,next){
+router.post('/add-to-cart/:id',function(req,res,next){
 	Cart.findOne({owner:req.user._id},function(error,cart){
 		cart.items.push({
 			item:req.params.id,
@@ -29,7 +31,7 @@ router.post('/product/:id',function(req,res,next){
 	});
 });
 
-
+//API to get product by category
 router.get('/products/:id',function(req,res,next){
 	Product
 	.find({category:req.params.id})
@@ -42,6 +44,7 @@ router.get('/products/:id',function(req,res,next){
 	});
 });
 
+//API to get all products
 router.get('/products',function(req,res,next){
 	Product
 	.find({})
@@ -54,7 +57,7 @@ router.get('/products',function(req,res,next){
 	});
 });
 
-
+//API to get a product by id
 router.get('/product/:id',function(req,res,next){
 	Product.findById({_id:req.params.id},function(error,product){
 		if(error) return next(error);

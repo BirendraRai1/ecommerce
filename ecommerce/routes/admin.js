@@ -2,12 +2,12 @@ var router=require('express').Router();
 var Category=require('../models/category');
 var Product=require('../models/product');
 var User=require('../models/user');
-var faker=require('faker');
 var auth=require('../middleware/auth')
 router.get('/add-category',auth.checkUser,function(req,res,next){
 	res.render('admin/add-category',{message:req.flash('success')});
 });
 
+//API to add a category
 router.post('/add-category',auth.checkUser,function(req,res,next){
 	var category=new Category();
 	category.name=req.body.name;
@@ -42,7 +42,7 @@ router.get('/edit-product',auth.checkUser,function(req,res,next){
 });
 
 
-//API to edit a product
+//API to edit a product by id
 router.post('/edit-product',auth.checkUser, function(req, res, next){
 
     var obj = req.body;
