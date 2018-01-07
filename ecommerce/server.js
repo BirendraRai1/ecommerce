@@ -42,19 +42,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(session({
-	resave:true,
-	saveUninitialized:true,
+	resave:false,
+	saveUninitialized:false,
 	secret:secret.secretKey,
-	store:new MongoStore({url:secret.database,autoReconnect:true})
+	store:new MongoStore({url:secret.database,autoReconnect:true}),
+	cookie:{maxAge:180*60*1000}
 }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function(req,res,next){
+	res.locals.login=req.isAuthenticated();
 	res.locals.user=req.user;
+	res.locals.session=req.session;
 	next();
 });
 app.use(cartLength);
+//console.log("finding cart",req.session.cart);
 app.use(function(req,res,next){
 	Category.find({},function(error,categories){
 		if(error) return next(error);
