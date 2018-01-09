@@ -14,7 +14,7 @@ var User = require('./models/user');
 var Product = require('./models/product');
 var Category=require('./models/category');
 var Cart=require('./models/cart');
-//var cartLength=require('./middleware/middleware');
+
 
 var app = express();
 mongoose.Promise=global.Promise
@@ -40,6 +40,11 @@ app.use(session({
 }));
 app.use(flash());
 
+app.use(function(req,res,next){
+	res.locals.user=req.user;
+	next();
+});
+
 var mongoose=require('mongoose');
 var userModel=mongoose.model('User');
 var cartModel=mongoose.model('Cart');
@@ -61,8 +66,8 @@ app.use(function(req,res,next){
 		});
 		cartModel.findOne({'owner':req.session.user._id},function(err,cart){
 			if(cart){
-				console.log("cart in server ",cart);
-				//req.cart=cart;
+				//console.log("cart in server ",cart);
+				req.cart=cart;
 				req.session.cart=cart;
 			}
 			else{
@@ -97,23 +102,16 @@ app.use(function(req,res,next){
 
 
 
-//app.use(cartLength);
-//console.log("finding cart",req.session.cart);
-/*app.use(function(req,res,next){
+
+app.use(function(req,res,next){
 	Category.find({},function(error,categories){
 		if(error) return next(error);
 		res.locals.categories=categories;
 		next();
 	});
-});*/
-
-app.use(function(req,res,next){
-	Category.find({},function(error,products){
-		if(error) return next(error);
-		res.locals.products=products;
-		next();
-	});
 });
+
+
 app.engine('ejs',engine);
 app.set('view engine','ejs');
 var mainRoutes=require('./routes/product');
@@ -122,9 +120,9 @@ var userRoutes=require('./routes/user');
 app.use(userRoutes);
 var adminRoutes=require('./routes/admin');
 app.use(adminRoutes);
-var apiRoutes=require('./api/api');
+/*var apiRoutes=require('./api/api');
 app.use('/api',apiRoutes);
-
+*/
 app.use(function(err,req,res,next){
 	console.log("came here due to error",err);
 	res.send(err);

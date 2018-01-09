@@ -3,8 +3,9 @@ var Product=require('../models/product');
 var Cart=require('../models/cart');
 var Order=require('../models/order');
 var auth=require('../middleware/auth')
+var mongoose=require('mongoose');
 
-
+var cartModel = mongoose.model('Cart');
 
 
 router.get('/',function(req,res,next){
@@ -24,23 +25,43 @@ router.get('/',function(req,res,next){
 /*Reduce Products Qty by One from Cart. */
 router.get('/reduce/:id', function(req, res, next) {
 	var productId = req.params.id;
-	Cart.findOne({'items._id':productId},function(error,product){
-		console.log("product",product);
-		/*product.reduceByOne(productId);
+	console.log("####123",productId);
+	/*cartModel.findOne({'items.id':productId},function(error,product){
+		console.log("product in reduceByOne ####",product);
+		product.reduceByOne(productId);
 		if (product.totalQty <= 0) {
 			req.session.cart = null;
 		} else {
 			req.session.cart = product;
-		}*/
+		}
 		if(product==null)
 		res.redirect('/cart');
-	});
+});*/
+cartModel.findOne({owner:req.user._id},function(error,cart){
+	var cartItemToBeModified = cart.items.id(productId);
+	console.log("####cartItem",cartItemToBeModified);
+
+	cartItemToBeModified.quantity -=1;
+	cart.total -= cartItemToBeModified.price;
+	cart.totalProduct -=1;
+	cart.items.id(productId).remove();
+	if(cartItemToBeModified.quantity>0){
+		cart.items.push(cartItemToBeModified);
+	}
+	cart.save(function(error){
+		if(error){
+			res.redirect('/');
+		}
+		req.session.cart = cart;
+		res.redirect('/cart')
+	})
+});
 });
 
 
 //API to add a product to cart
 router.post('/add-to-cart/:id',auth.addToCartCheck,function(req,res,next){
-	Cart.findOne({owner:req.user._id},function(error,cart){
+	cartModel.findOne({owner:req.user._id},function(error,cart){
 		cart.items.push({
 			item:req.params.id,
 			name:req.body.name,
@@ -78,9 +99,9 @@ router.get('/products/:id',function(req,res,next){
 //API to get a cart
 router.get('/cart',function(req,res,next){
 	if(!req.session.cart){
-		return res.render('main/cart',{products:null,user:req.session.user,session:req.session,categories:req.session.categories});
+		res.render('main/cart',{products:null,user:req.session.user,session:req.session,categories:req.session.categories});
 	}
-	var cart = new Cart(req.session.cart);
+	//var cart = new Cart(req.session.cart);
 	res.render('main/cart',{products:req.session.cart.items,totalprice:req.session.cart.total,user:req.session.user,session:req.session,categories:req.session.categories}) 
 });
 

@@ -45,15 +45,15 @@ router.get('/edit-product',auth.checkUser,function(req,res,next){
 //API to edit a product by id
 router.post('/edit-product',auth.checkUser, function(req, res, next){
 
-    var obj = req.body;
-    var id = req.body.id;
+	var obj = req.body;
+	var id = req.body.id;
 
-    Product.update({_id: id}, obj, {upsert: true}, function(err, Product){
-        if(err)
-        	return next(err);
-        req.flash('success','Successfully deleted a product');
-        res.redirect('/edit-product');
-    });
+	Product.update({_id: id}, obj, {upsert: true}, function(err, Product){
+		if(err)
+			return next(err);
+		req.flash('success','Successfully deleted a product');
+		res.redirect('/edit-product');
+	});
 
 });
 
@@ -62,15 +62,15 @@ router.get('/delete-product',auth.checkUser,function(req,res,next){
 });
 
 //API to delete a particular product
-	router.post('/delete-product',auth.checkUser,function(req,res,next){
-		console.log("came here");
-		console.log(req.body.id);
-		Product.remove({_id:req.body.id},function(err,deletedProduct){
-			console.log("db deleted",deletedProduct);
-			if(err){
-				req.flash('success','Product is not available')
-				return res.redirect('/delete-product');;
-			}
+router.post('/delete-product',auth.checkUser,function(req,res,next){
+	console.log("came here");
+	console.log(req.body.id);
+	Product.remove({_id:req.body.id},function(err,deletedProduct){
+		console.log("db deleted",deletedProduct);
+		if(err){
+			req.flash('success','Product is not available')
+			return res.redirect('/delete-product');;
+		}
 			/*if(deletedProduct===undefined){
 				console.log("mama mia")
 				req.flash('success','Product is not available')
@@ -81,7 +81,7 @@ router.get('/delete-product',auth.checkUser,function(req,res,next){
 				return res.redirect('/delete-product');
 			}
 		});
-	});
+});
 
 
 

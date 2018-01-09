@@ -1,4 +1,4 @@
-var Cart=require('../models/cart');
+/*var Cart=require('../models/cart');
 
 
 module.exports=function(req,res,next){
@@ -29,3 +29,4 @@ module.exports=function(req,res,next){
 };
 
 
+*/
