@@ -17,6 +17,7 @@ var Cart=require('./models/cart');
 //var cartLength=require('./middleware/middleware');
 
 var app = express();
+mongoose.Promise=global.Promise
 var dbPath="mongodb://localhost/ecommerceStore3";
 //command to connect with the database
 db=mongoose.connect(dbPath);
@@ -33,7 +34,7 @@ app.use(session({
 	resave:false,
 	saveUninitialized:false,
 	secret:'myAppSecret',
-	//store:new MongoStore({url:secret.database,autoReconnect:true}),
+	store:new MongoStore({url:"mongodb://localhost/ecommerceStore3",autoReconnect:true}),
 	cookie:{maxAge:180*60*1000},
 
 }));
@@ -49,7 +50,9 @@ app.use(function(req,res,next){
 			if(user){
 				req.user=user;
 				delete req.user.password;
+				//console.log("req.session.user before ",req.session.user);
 				req.session.user=user;
+				console.log("req.session.user after ",req.session.user);
 				delete req.session.user.password;
 			}
 			else{
@@ -58,7 +61,8 @@ app.use(function(req,res,next){
 		});
 		cartModel.findOne({'owner':req.session.user._id},function(err,cart){
 			if(cart){
-				req.cart=cart;
+				console.log("cart in server ",cart);
+				//req.cart=cart;
 				req.session.cart=cart;
 			}
 			else{
@@ -103,13 +107,13 @@ app.use(function(req,res,next){
 	});
 });*/
 
-/*app.use(function(req,res,next){
+app.use(function(req,res,next){
 	Category.find({},function(error,products){
 		if(error) return next(error);
 		res.locals.products=products;
 		next();
 	});
-});*/
+});
 app.engine('ejs',engine);
 app.set('view engine','ejs');
 var mainRoutes=require('./routes/product');

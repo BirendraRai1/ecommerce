@@ -13,10 +13,10 @@ var CartSchema=new Schema({
 	totalProduct:{type:Number,default:0}
 });
 
-/*CartSchema.methods.reduceByOne=function(id) {
+CartSchema.methods.reduceByOne=function(id) {
 	for(var i=0;i<this.items.length;i++){
 		if(this.items[i].item==id){
-			console.log("this.items[id]",this.items[i]);
+			console.log("this.items[i]",this.items[i]);
 			this.items[i].quantity--;
 	        this.items[i].price -= this.items[i].price;
 	        this.totalProduct--;
@@ -26,6 +26,6 @@ var CartSchema=new Schema({
 			}
 		}
 	}
-};*/
+};
 
 module.exports=mongoose.model('Cart',CartSchema);
