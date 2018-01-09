@@ -1,13 +1,9 @@
 var router=require('express').Router();
 var path=require('path');
-var passport=require('passport');
-var passportConf=require('../config/passport');
 var multer=require('multer');
 var fs=require('fs');
-
 var User=require('../models/user');
 var Cart=require('../models/cart');
-
 var storage =   multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, './public/uploads');
@@ -24,11 +20,9 @@ router.get('/login',function(req,res,next){
 
 //API to post login
 router.post('/login',function(req,res){
-	console.log("checking body",req.body.email,req.body.password)
 	User.findOne({$and:[{'email':req.body.email},{'password':req.body.password}]},function(err,foundUser){
 		console.log("during login",foundUser);
 		if(err){
-			//var myResponse=responseGenerator.generate(true,"some error"+err,500,null);
 			res.send(err);
 		}
 
@@ -57,7 +51,6 @@ router.get('/signup',function(req,res){
 
 
 router.post('/signup',function(req,res,next){
-	console.log("hi all")
 	var user=new User();
 	user.name=req.body.name;
 	user.email=req.body.email;
@@ -84,11 +77,6 @@ router.post('/signup',function(req,res,next){
 						return next(error);
 					req.session.cart=cart;
 					res.redirect('/');
-					/*req.logIn(user,function(error){
-						if(error) return next(error);
-						res.redirect('/');
-					});*/
-
 				});
 			});
 		}

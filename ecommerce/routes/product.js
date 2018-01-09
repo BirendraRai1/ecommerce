@@ -13,8 +13,6 @@ router.get('/',function(req,res,next){
 	.find({})
 	.populate('category')
 	.exec(function(error,products){
-		//if(error) res.send(error);
-		//console.log("after login",req.user,req.session,products)
 		res.render('main/home',{
 			products:products,user:req.session.user,session:req.session,categories:req.session.categories
 		});
@@ -25,22 +23,8 @@ router.get('/',function(req,res,next){
 /*Reduce Products Qty by One from Cart. */
 router.get('/reduce/:id', function(req, res, next) {
 	var productId = req.params.id;
-	console.log("####123",productId);
-	/*cartModel.findOne({'items.id':productId},function(error,product){
-		console.log("product in reduceByOne ####",product);
-		product.reduceByOne(productId);
-		if (product.totalQty <= 0) {
-			req.session.cart = null;
-		} else {
-			req.session.cart = product;
-		}
-		if(product==null)
-		res.redirect('/cart');
-});*/
-cartModel.findOne({owner:req.user._id},function(error,cart){
+	cartModel.findOne({owner:req.user._id},function(error,cart){
 	var cartItemToBeModified = cart.items.id(productId);
-	console.log("####cartItem",cartItemToBeModified);
-
 	cartItemToBeModified.quantity -=1;
 	cart.total -= cartItemToBeModified.price;
 	cart.totalProduct -=1;
@@ -74,7 +58,6 @@ router.post('/add-to-cart/:id',auth.addToCartCheck,function(req,res,next){
 			if(error) 
 				return res.send(error);
 			req.session.cart=cart;
-			console.log("req.session.cart",req.session.cart);
 			return res.redirect('/');
 		});
 	});

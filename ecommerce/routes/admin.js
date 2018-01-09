@@ -63,19 +63,11 @@ router.get('/delete-product',auth.checkUser,function(req,res,next){
 
 //API to delete a particular product
 router.post('/delete-product',auth.checkUser,function(req,res,next){
-	console.log("came here");
-	console.log(req.body.id);
 	Product.remove({_id:req.body.id},function(err,deletedProduct){
-		console.log("db deleted",deletedProduct);
 		if(err){
 			req.flash('success','Product is not available')
 			return res.redirect('/delete-product');;
 		}
-			/*if(deletedProduct===undefined){
-				console.log("mama mia")
-				req.flash('success','Product is not available')
-				return res.redirect('/delete-product');
-			}*/
 			else{
 				req.flash('success','Successfully deleted a product');
 				return res.redirect('/delete-product');

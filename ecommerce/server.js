@@ -9,7 +9,6 @@ var session=require('express-session');
 var cookieParser=require('cookie-parser');
 var flash=require('express-flash');
 var MongoStore=require('connect-mongo')(session);
-var secret=require('./config/secret');
 var User = require('./models/user');
 var Product = require('./models/product');
 var Category=require('./models/category');
@@ -57,7 +56,6 @@ app.use(function(req,res,next){
 				delete req.user.password;
 				//console.log("req.session.user before ",req.session.user);
 				req.session.user=user;
-				console.log("req.session.user after ",req.session.user);
 				delete req.session.user.password;
 			}
 			else{
@@ -120,9 +118,6 @@ var userRoutes=require('./routes/user');
 app.use(userRoutes);
 var adminRoutes=require('./routes/admin');
 app.use(adminRoutes);
-/*var apiRoutes=require('./api/api');
-app.use('/api',apiRoutes);
-*/
 app.use(function(err,req,res,next){
 	console.log("came here due to error",err);
 	res.send(err);
