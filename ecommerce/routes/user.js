@@ -19,28 +19,49 @@ var storage =   multer.diskStorage({
 var upload = multer({ storage : storage}).single('file');
 router.get('/login',function(req,res,next){
 	if(req.user) return res.redirect('/');
-	res.render('accounts/login',{message:req.flash('loginMessage')});
+	res.render('accounts/login',{message:req.flash('loginMessage'),user:req.user,categories:req.session.categories});
 });
 
-router.post('/login',passport.authenticate('local-login',{
-	successRedirect:'/',
-	failureRedirect:'/login',
-	failureFlash:true
-}));
+//API to post login
+router.post('/login',function(req,res){
+	console.log("checking body",req.body.email,req.body.password)
+	User.findOne({$and:[{'email':req.body.email},{'password':req.body.password}]},function(err,foundUser){
+		console.log("during login",foundUser);
+		if(err){
+			//var myResponse=responseGenerator.generate(true,"some error"+err,500,null);
+			res.send(err);
+		}
+
+		else if(foundUser==null ||foundUser==undefined){
+			res.redirect('/signup')
+		}
+		else{
+			req.session.user=foundUser;
+			req.user = foundUser;
+			Cart.findOne({owner:req.session.user._id},function(err,cart){
+				if(err)
+					res.send(err);
+				req.session.cart=cart;
+			});
+			
+			delete req.session.user.password;
+			res.redirect('/');
+		}
+	});
+});
 router.get('/signup',function(req,res){
 	res.render('accounts/signup',{
-		errors: req.flash('errors')
+		errors: req.flash('errors'),user:req.user,session:req.session,categories:req.session.categories
 	});
 });
 
 
 router.post('/signup',function(req,res,next){
+	console.log("hi all")
 	var user=new User();
 	user.name=req.body.name;
 	user.email=req.body.email;
 	user.password=req.body.password;
-	//user.profile.picture=user.gravatar();
-
 	User.findOne({email : req.body.email},function(error,existingUser){
 		if(existingUser)
 		{
@@ -54,14 +75,19 @@ router.post('/signup',function(req,res,next){
 				{
 					return next(error);
 				}
+				req.session.user=user;
+				req.user = req.session.user
 				var cart=new Cart();
 				cart.owner=user._id;
-				cart.save(function(error){
-					if(error) return next(error);
-					req.logIn(user,function(error){
+				cart.save(function(error,cart){
+					if(error) 
+						return next(error);
+					req.session.cart=cart;
+					res.redirect('/');
+					/*req.logIn(user,function(error){
 						if(error) return next(error);
 						res.redirect('/');
-					});
+					});*/
 
 				});
 			});
@@ -70,7 +96,7 @@ router.post('/signup',function(req,res,next){
 });
 
 router.get('/changePassword',function(req,res){
-	res.render('accounts/changePassword');
+	res.render('accounts/changePassword',{user:req.user,session:req.session,categories:req.session.categories});
 });
 
 router.post('/changePassword', function (req, res) {
@@ -94,8 +120,13 @@ router.post('/changePassword', function (req, res) {
   });
 
 
-router.get('/logout',function(req,res,next){
+/*router.get('/logout',function(req,res,next){
 	req.logout();
 	res.redirect('/');
+});*/
+router.get('/logout', function (req, res){
+  req.session.destroy(function (err) {
+    res.redirect('/'); //Inside a callback… bulletproof!
+  });
 });
 module.exports=router;

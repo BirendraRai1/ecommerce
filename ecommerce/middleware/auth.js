@@ -6,3 +6,11 @@ exports.checkUser=function (req,res,next){
 	else
 		next()
 };
+
+exports.addToCartCheck=function (req,res,next){
+	console.log("hi there",req.user);
+	if(req.user)
+		next()
+	else
+		res.redirect('/');
+};

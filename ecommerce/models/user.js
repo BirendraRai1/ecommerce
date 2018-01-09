@@ -13,7 +13,7 @@ var UserSchema = new Schema({
 	}]
 });
 
-UserSchema.pre('save',function(next){
+/*UserSchema.pre('save',function(next){
 	var user=this;
 	if(!user.isModified('password')) return next();
 	bcrypt.genSalt(10,function(err,salt){
@@ -28,5 +28,5 @@ UserSchema.pre('save',function(next){
 
 UserSchema.methods.comparePassword=function(password){
 	return bcrypt.compareSync(password,this.password);
-};
+};*/
 module.exports=mongoose.model('User',UserSchema);

@@ -1,0 +1,35 @@
+<% layout('layout') -%>
+
+<div class="row">
+  <div class="col-lg-6 col-md-offset-3">
+        <h1>Order:<%= order._id %></h1>
+        <hr>
+        <h2>User Info</h2>
+        <p>Address: <%= order.address %></p>              
+        <p>username: <%= order.username %></p>
+        <p>mobileNumber:<%= order.mobileNumber %></p>
+        <hr>
+        <h2>Cart</h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Title</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+            <% for(var i=0;i<order.items.length;i++) { %>
+                <tr>
+                    <td><%= order.items[i].name %></td>
+                    <td><%= order.items[i].quantity %></td>
+                    <td><%= order.items[i].price %></td>
+                    <td>RS<%= order.items[i].quantity*order.items[i].price %></td>
+                </tr>
+            <% } %>
+            <tr>
+                <td><strong>Total Quantity:</strong></td>
+                <td><strong><%= order.quantity %></strong></td>
+                <td><strong><small><i class="fa fa-usd" aria-hidden="true"></i></small><%= order.amount %></strong></td>
+            </tr>
+        </table>
+ </div>
+</div>

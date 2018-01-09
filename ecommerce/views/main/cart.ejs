@@ -7,13 +7,13 @@
               <% for(var i=0;i<products.length;i++) { %>
                     <li class="list-group-item">
                         <span class="badge"><%= products[i].quantity %></span>
-                        <strong><%= products[i].item %></strong>
+                        <strong><%= products[i].name %></strong>
                         <span class="label label-success">RS<%= products[i].quantity*products[i].price %></span>
                         <div class="btn-group">
                             <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Action <span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <li><a href="/cart/reduce/{{this.item._id}}">Reduce by 1</a></li>
-                                <li><a href="/cart/remove/{{this.item._id}}">Remove All</a></li>
+                                <li><a href="/reduce/<%= products[i]._id%>">Reduce by 1</a></li>
+                                <li><a href="/cart/remove/<%= products[i]._id%>">Remove All</a></li>
                             </ul>
                         </div> 
                     </li>
@@ -29,7 +29,7 @@
     <hr>
     <div class="row">
         <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
-            <a href="/cart/checkout" type="button" class="btn btn-success">Checkout</a>
+            <a href="/checkout" type="button" class="btn btn-success">Checkout</a>
         </div>
     </div>
  <% }else { %>  
