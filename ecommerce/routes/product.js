@@ -56,7 +56,7 @@ router.post('/add-to-cart/:id',auth.addToCartCheck,function(req,res,next){
 		cart.totalProduct=cart.totalProduct+parseInt(req.body.quantity);
 		cart.save(function(error){
 			if(error) 
-				return res.send(error);
+				return res.send("<h1 style='color:red;margin-left:50px;'>Please enter the quantity of the product which you want to purchased</h1>");
 			req.session.cart=cart;
 			return res.redirect('/');
 		});
